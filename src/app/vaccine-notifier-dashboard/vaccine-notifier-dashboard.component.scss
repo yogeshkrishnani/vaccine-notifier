@@ -1,0 +1,43 @@
+:host {
+  .header {
+    background-color: #f08080;
+    padding: 1rem;
+
+    .avatar-user {
+      height: 40px;
+      position: absolute;
+      right: 1rem;
+
+      img {
+        border-radius: 50%;
+      }
+    }
+
+    .title {
+      font-weight: 500;
+    }
+  }
+
+  .container {
+    padding: 1rem;
+
+    .vaccineNotifierForm {
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      margin-top: 1rem;
+    }
+
+    table {
+      margin-top: 1rem;
+      width: 100%;
+
+      th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+        padding-right: 1rem;
+      }
+    }
+  }
+
+}

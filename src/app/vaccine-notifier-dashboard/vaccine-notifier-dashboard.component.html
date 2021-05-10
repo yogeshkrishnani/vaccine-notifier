@@ -1,0 +1,111 @@
+<mat-toolbar class="header">
+
+  <h1 *ngIf="!monitoringId" class="title">Vaccine Notifier</h1>
+
+  <marquee *ngIf="monitoringId">Vaccine Notifier Running</marquee>
+
+  <a target="_blank" class="avatar-user avatar avatar-small" href="https://www.linkedin.com/in/yogeshkrishnani">
+    <img
+      title="Yogesh Krishnani"
+      src="https://avatars.githubusercontent.com/u/17405938" alt="@yogeshkrishnani" size="40" height="40"
+      width="40"
+    >
+  </a>
+
+</mat-toolbar>
+
+<div class="container">
+
+  <form class="vaccineNotifierForm" [formGroup]="vaccineNotifierFormGroup">
+    <mat-form-field *ngIf="( states$ | async )" appearance="outline">
+      <mat-label>Select State</mat-label>
+      <mat-select formControlName="state">
+        <mat-option *ngFor="let state of ( states$ | async )" [value]="state.state_id">{{state.state_name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Select Districts</mat-label>
+      <mat-select formControlName="districts" multiple>
+        <mat-option
+          *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
+        >{{district.district_name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Polling Interval</mat-label>
+      <mat-select formControlName="pollingInterval">
+        <mat-option
+          *ngFor="let interval of pollingIntervals" [value]="interval.value"
+        >{{interval.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox color="primary" formControlName="makeSound">
+      <mat-label>Make Sound</mat-label>
+    </mat-checkbox>
+
+  </form>
+
+  <button
+    *ngIf="!monitoringId"
+    (click)="startMonitoring()"
+    [disabled]="!vaccineNotifierFormGroup.valid"
+    color="primary"
+    mat-flat-button
+    type="button"
+  >
+    Start Monitoring
+  </button>
+
+  <button
+    (click)="stopMonitoring()"
+    *ngIf="monitoringId"
+    color="warn"
+    mat-flat-button
+    type="button"
+  >
+    Stop Monitoring
+  </button>
+
+  <ng-container
+    *ngIf="( availableSlots$ | async )?.length > 0"
+  >
+
+    <table mat-table [dataSource]="availableSlots$ | async" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="vaccine">
+        <th mat-header-cell *matHeaderCellDef> Vaccine Type</th>
+        <td mat-cell *matCellDef="let element"> {{element.session.vaccine}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date</th>
+        <td mat-cell *matCellDef="let element"> {{element.session.date}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="pinCode">
+        <th mat-header-cell *matHeaderCellDef> Pincode</th>
+        <td mat-cell *matCellDef="let element"> {{element.center.pincode}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="availableCapacity">
+        <th mat-header-cell *matHeaderCellDef> Available Capacity</th>
+        <td mat-cell *matCellDef="let element"> {{element.session.available_capacity}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef> Address</th>
+        <td mat-cell *matCellDef="let element"> {{element.center.address}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </ng-container>
+
+</div>
+
+
