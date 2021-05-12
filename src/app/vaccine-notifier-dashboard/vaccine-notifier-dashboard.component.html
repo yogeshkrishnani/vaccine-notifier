@@ -42,6 +42,23 @@
       </mat-select>
     </mat-form-field>
 
+    <section class="age-group-section">
+      <mat-checkbox
+        class="age-group"
+        color="primary"
+        formControlName="ageGroup18Plus"
+      >
+        <mat-label>18+ Age Group</mat-label>
+      </mat-checkbox>
+      <mat-checkbox
+        class="age-group"
+        color="primary"
+        formControlName="ageGroup45Plus"
+      >
+        <mat-label>45+ Age Group</mat-label>
+      </mat-checkbox>
+    </section>
+
     <mat-checkbox color="primary" formControlName="makeSound">
       <mat-label>Make Sound</mat-label>
     </mat-checkbox>
@@ -93,6 +110,16 @@
       <ng-container matColumnDef="availableCapacity">
         <th mat-header-cell *matHeaderCellDef> Available Capacity</th>
         <td mat-cell *matCellDef="let element"> {{element.session.available_capacity}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ageGroup">
+        <th mat-header-cell *matHeaderCellDef> Age Group</th>
+        <td mat-cell *matCellDef="let element"> {{element.session.min_age_limit}}+</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name</th>
+        <td mat-cell *matCellDef="let element"> {{element.center.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="address">

@@ -38,6 +38,17 @@
         padding-right: 1rem;
       }
     }
+
+    .age-group-section {
+      display: flex;
+      align-content: center;
+      align-items: center;
+      height: 2rem;
+
+      .age-group {
+        margin: 0 1rem 0 0;
+      }
+    }
   }
 
 }

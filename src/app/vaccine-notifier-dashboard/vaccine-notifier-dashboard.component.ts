@@ -31,7 +31,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   private availableSlotsSubject: BehaviorSubject<any> = new BehaviorSubject<any>( undefined );
   public availableSlots$: Observable<any> = this.availableSlotsSubject.asObservable();
 
-  public displayedColumns: string[] = [ 'vaccine', 'date', 'pinCode', 'availableCapacity', 'address' ];
+  public displayedColumns: string[] = [ 'vaccine', 'date', 'pinCode', 'availableCapacity', 'ageGroup', 'name', 'address' ];
 
   public pollingIntervals = [
     { value : 20, label : '20sec' },
@@ -60,6 +60,8 @@ export class VaccineNotifierDashboardComponent implements OnInit {
       state : new FormControl( [], Validators.required ),
       districts : new FormControl( [], Validators.required ),
       pollingInterval : new FormControl( 20, Validators.required ),
+      ageGroup18Plus : new FormControl( true, Validators.required ),
+      ageGroup45Plus : new FormControl( false, Validators.required ),
       makeSound : new FormControl( true, Validators.required ),
     } );
     this.vaccineNotifierFormGroup.get( 'state' ).valueChanges.subscribe( ( stateId: number ) => {
@@ -71,16 +73,12 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     this.availableSlotsSubject.next( [] );
     this.vaccineNotifierFormGroup.disable();
     this.districts = this.vaccineNotifierFormGroup.get( 'districts' ).value;
-    const dates = Array.from( Array( 5 ).keys() ).map( ( d ) => {
-      return moment().add( d, 'days' ).format( 'DD-MM-YYYY' ).toString();
-    } );
+    const date = moment().format( 'DD-MM-YYYY' ).toString();
     const pollingInterval = this.vaccineNotifierFormGroup.get( 'pollingInterval' ).value;
     this.monitoringId = setInterval( () => {
       this.districts.forEach( districtCode => {
-        dates.forEach( ( date ) => {
-          this.vaccineNotifierDashboardService.getCalendarByDistrict( districtCode, date ).subscribe( ( res: any ) => {
-            this.handleResponse( res );
-          } );
+        this.vaccineNotifierDashboardService.getCalendarByDistrict( districtCode, date ).subscribe( ( res: any ) => {
+          this.handleResponse( res );
         } );
       } );
     }, pollingInterval * 1000 );
@@ -96,11 +94,21 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     const availableCenters = [];
     const centers = res.centers;
     const makeSound = this.vaccineNotifierFormGroup.get( 'makeSound' ).value;
-    centers.forEach( center => {
-      center.sessions.forEach( session => {
-        if ( session.available_capacity > 0 && session.min_age_limit < 45 ) {
+    const ageGroup18Plus = this.vaccineNotifierFormGroup.get( 'ageGroup18Plus' ).value;
+    const ageGroup45Plus = this.vaccineNotifierFormGroup.get( 'ageGroup45Plus' ).value;
+    centers?.forEach( center => {
+      center.sessions?.forEach( session => {
+        if ( !ageGroup18Plus && session.min_age_limit === 18 ) {
+          return;
+        }
+        if ( !ageGroup45Plus && session.min_age_limit >= 45 ) {
+          return;
+        }
+        session.available_capacity = Math.round( session.available_capacity );
+        if ( session.available_capacity > 0 ) {
           console.log(
             'vaccine: ' + session.vaccine,
+            '| min_age_limit: ' + session.min_age_limit,
             '| date: ' + session.date,
             '| pincode: ' + center.pincode,
             '| availableCapacity: ' + session.available_capacity,
