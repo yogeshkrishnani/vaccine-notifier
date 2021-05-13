@@ -17,21 +17,36 @@
 <div class="container">
 
   <form class="vaccineNotifierForm" [formGroup]="vaccineNotifierFormGroup">
-    <mat-form-field *ngIf="( states$ | async )" appearance="outline">
-      <mat-label>Select State</mat-label>
-      <mat-select formControlName="state">
-        <mat-option *ngFor="let state of ( states$ | async )" [value]="state.state_id">{{state.state_name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Select Districts</mat-label>
-      <mat-select formControlName="districts" multiple>
-        <mat-option
-          *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
-        >{{district.district_name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <mat-tab-group (selectedTabChange)="handleSearchByTabChange($event)">
+      <mat-tab>
+        <ng-template mat-tab-label>Search By District</ng-template>
+        <mat-form-field *ngIf="( states$ | async )" appearance="outline">
+          <mat-label>Select State</mat-label>
+          <mat-select formControlName="state">
+            <mat-option
+              *ngFor="let state of ( states$ | async )" [value]="state.state_id"
+            >{{state.state_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select Districts</mat-label>
+          <mat-select formControlName="districts" multiple>
+            <mat-option
+              *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
+            >{{district.district_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>Search By PIN</ng-template>
+        <mat-form-field appearance="outline">
+          <mat-label>Enter PIN</mat-label>
+          <input matInput formControlName="pinCode">
+        </mat-form-field>
+      </mat-tab>
+    </mat-tab-group>
 
     <mat-form-field appearance="outline">
       <mat-label>Polling Interval</mat-label>

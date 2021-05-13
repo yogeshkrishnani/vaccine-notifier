@@ -22,8 +22,14 @@
     padding: 1rem;
 
     .vaccineNotifierForm {
-      display: flex;
-      flex-direction: column;
+      mat-form-field {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    ::ng-deep .mat-tab-body-wrapper {
+      margin-top: 1rem;
     }
 
     button {

@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import * as moment from 'moment';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { VaccineNotifierDashboardService } from './vaccine-notifier-dashboard.service';
+
+export enum SearchByTab {
+  District,
+  PinCode
+}
 
 export interface State {
   readonly state_id: number;
@@ -26,8 +33,6 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   public districts$: Observable<District[]>;
   public vaccineNotifierFormGroup: FormGroup;
 
-  private districts: number[];
-
   private availableSlotsSubject: BehaviorSubject<any> = new BehaviorSubject<any>( undefined );
   public availableSlots$: Observable<any> = this.availableSlotsSubject.asObservable();
 
@@ -41,6 +46,8 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     { value : 120, label : '120sec' },
     { value : 180, label : '180sec' },
   ];
+
+  private selectedTab: SearchByTab;
 
   constructor(
     private vaccineNotifierDashboardService: VaccineNotifierDashboardService,
@@ -57,30 +64,47 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.states$ = this.vaccineNotifierDashboardService.loadStates();
     this.vaccineNotifierFormGroup = new FormGroup( {
-      state : new FormControl( [], Validators.required ),
+      state : new FormControl( undefined, Validators.required ),
       districts : new FormControl( [], Validators.required ),
       pollingInterval : new FormControl( 20, Validators.required ),
       ageGroup18Plus : new FormControl( true, Validators.required ),
       ageGroup45Plus : new FormControl( false, Validators.required ),
       makeSound : new FormControl( true, Validators.required ),
+      pinCode : new FormControl(),
     } );
-    this.vaccineNotifierFormGroup.get( 'state' ).valueChanges.subscribe( ( stateId: number ) => {
+    this.vaccineNotifierFormGroup.get( 'state' ).valueChanges.pipe(
+      filter( ( stateId: number ) => !!stateId ),
+    ).subscribe( ( stateId: number ) => {
       this.districts$ = this.vaccineNotifierDashboardService.loadDistricts( stateId );
     } );
+  }
+
+  handleSearchByTabChange( tabChangeEvent: MatTabChangeEvent ): void {
+    this.selectedTab = tabChangeEvent.index;
+    const stateFormControl = this.vaccineNotifierFormGroup.get( 'state' );
+    const districtsFormControl = this.vaccineNotifierFormGroup.get( 'districts' );
+    const pinCodeFormControl = this.vaccineNotifierFormGroup.get( 'pinCode' );
+    if ( this.selectedTab === SearchByTab.District ) {
+      stateFormControl.setValidators( Validators.required );
+      districtsFormControl.setValidators( Validators.required );
+      pinCodeFormControl.clearValidators();
+    } else if ( this.selectedTab === SearchByTab.PinCode ) {
+      stateFormControl.clearValidators();
+      districtsFormControl.clearValidators();
+      pinCodeFormControl.setValidators( [ Validators.required, Validators.minLength( 6 ) ] );
+    }
+    stateFormControl.updateValueAndValidity();
+    districtsFormControl.updateValueAndValidity();
+    pinCodeFormControl.updateValueAndValidity();
   }
 
   startMonitoring(): void {
     this.availableSlotsSubject.next( [] );
     this.vaccineNotifierFormGroup.disable();
-    this.districts = this.vaccineNotifierFormGroup.get( 'districts' ).value;
-    const date = moment().format( 'DD-MM-YYYY' ).toString();
     const pollingInterval = this.vaccineNotifierFormGroup.get( 'pollingInterval' ).value;
+    this.checkAvailableSlots(); // search immediately and then through intervals
     this.monitoringId = setInterval( () => {
-      this.districts.forEach( districtCode => {
-        this.vaccineNotifierDashboardService.getCalendarByDistrict( districtCode, date ).subscribe( ( res: any ) => {
-          this.handleResponse( res );
-        } );
-      } );
+      this.checkAvailableSlots();
     }, pollingInterval * 1000 );
   }
 
@@ -88,6 +112,23 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     clearInterval( this.monitoringId );
     this.monitoringId = undefined;
     this.vaccineNotifierFormGroup.enable();
+  }
+
+  checkAvailableSlots(): void {
+    const date = moment().format( 'DD-MM-YYYY' ).toString();
+    if ( this.selectedTab === SearchByTab.District ) {
+      const districts: number[] = this.vaccineNotifierFormGroup.get( 'districts' ).value;
+      districts.forEach( districtCode => {
+        this.vaccineNotifierDashboardService.getCalendarByDistrict( districtCode, date ).subscribe( ( res: any ) => {
+          this.handleResponse( res );
+        } );
+      } );
+    } else if ( this.selectedTab === SearchByTab.PinCode ) {
+      const pinCode = this.vaccineNotifierFormGroup.get( 'pinCode' ).value;
+      this.vaccineNotifierDashboardService.getCalendarByPin( pinCode, date ).subscribe( ( res: any ) => {
+        this.handleResponse( res );
+      } );
+    }
   }
 
   private handleResponse( res: any ): void {

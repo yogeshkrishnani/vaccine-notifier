@@ -38,4 +38,14 @@ export class VaccineNotifierDashboardService {
     );
   }
 
+  public getCalendarByPin( pinCode: string, date: string ): Observable<any> {
+    const opts = {
+      params : new HttpParams( { fromString : `pincode=${ pinCode }&date=${ date }` } ),
+    };
+    return this.httpClient.get<any>(
+      `${ this.endPoint }/appointment/sessions/public/calendarByPin`,
+      opts,
+    );
+  }
+
 }

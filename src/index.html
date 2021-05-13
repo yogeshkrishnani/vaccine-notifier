@@ -23,5 +23,14 @@
 <!-- Initialize Firebase -->
 <script src="/__/firebase/init.js"></script>
 
+
+<!-- Initialize Firebase Analytics -->
+<script>
+  if(firebase) {
+    firebase.analytics();
+    console.log( 'firebase analytics initialized' );
+  }
+</script>
+
 </body>
 </html>
