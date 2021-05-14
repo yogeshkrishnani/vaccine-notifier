@@ -47,7 +47,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     { value : 180, label : '180sec' },
   ];
 
-  private selectedTab: SearchByTab;
+  private selectedTab: SearchByTab = SearchByTab.District;
 
   constructor(
     private vaccineNotifierDashboardService: VaccineNotifierDashboardService,
