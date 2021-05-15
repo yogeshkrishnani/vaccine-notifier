@@ -17,7 +17,7 @@ export interface State {
 }
 
 export interface District {
-  readonly district_id: number,
+  readonly district_id: number;
   readonly district_name: string;
 }
 
@@ -102,7 +102,6 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     this.availableSlotsSubject.next( [] );
     this.vaccineNotifierFormGroup.disable();
     const pollingInterval = this.vaccineNotifierFormGroup.get( 'pollingInterval' ).value;
-    this.checkAvailableSlots(); // search immediately and then through intervals
     this.monitoringId = setInterval( () => {
       this.checkAvailableSlots();
     }, pollingInterval * 1000 );
@@ -115,7 +114,9 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   }
 
   checkAvailableSlots(): void {
-    const date = moment().format( 'DD-MM-YYYY' ).toString();
+    const hours = new Date().getHours();
+    const currMoment: moment.Moment = hours < 17 ? moment() : moment().add( 1, 'days' ); // if after 5PM then fetch calendar from tomorrow
+    const date = currMoment.format( 'DD-MM-YYYY' ).toString();
     if ( this.selectedTab === SearchByTab.District ) {
       const districts: number[] = this.vaccineNotifierFormGroup.get( 'districts' ).value;
       districts.forEach( districtCode => {
@@ -124,9 +125,16 @@ export class VaccineNotifierDashboardComponent implements OnInit {
         } );
       } );
     } else if ( this.selectedTab === SearchByTab.PinCode ) {
-      const pinCode = this.vaccineNotifierFormGroup.get( 'pinCode' ).value;
-      this.vaccineNotifierDashboardService.getCalendarByPin( pinCode, date ).subscribe( ( res: any ) => {
-        this.handleResponse( res );
+      const commaSeparatedPinCodes: string = this.vaccineNotifierFormGroup.get( 'pinCode' ).value.replace( /\s/g, '' );
+      const pinCodes: string[] = commaSeparatedPinCodes.split( ',' );
+      pinCodes.forEach( ( pinCode ) => {
+        if ( pinCode ) {
+          this.vaccineNotifierDashboardService
+            .getCalendarByPin( pinCode, date )
+            .subscribe( ( res: any ) => {
+              this.handleResponse( res );
+            } );
+        }
       } );
     }
   }
