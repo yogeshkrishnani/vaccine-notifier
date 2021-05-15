@@ -124,10 +124,16 @@ export class VaccineNotifierDashboardComponent implements OnInit {
         } );
       } );
     } else if ( this.selectedTab === SearchByTab.PinCode ) {
-      const pinCode = this.vaccineNotifierFormGroup.get( 'pinCode' ).value;
-      this.vaccineNotifierDashboardService.getCalendarByPin( pinCode, date ).subscribe( ( res: any ) => {
-        this.handleResponse( res );
-      } );
+      const pinCodes = this.vaccineNotifierFormGroup.get('pinCode').value;
+      for (const pin of pinCodes.toString().split(',')) {
+        if (pin) {
+          this.vaccineNotifierDashboardService
+            .getCalendarByPin(pin.trim(), date)
+            .subscribe((res: any) => {
+              this.handleResponse(res);
+            });
+        }
+      }
     }
   }
 
