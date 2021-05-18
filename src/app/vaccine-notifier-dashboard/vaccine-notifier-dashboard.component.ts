@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import * as moment from 'moment';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, shareReplay } from 'rxjs/operators';
 import { VaccineNotifierDashboardService } from './vaccine-notifier-dashboard.service';
 
 export enum SearchByTab {
@@ -62,7 +62,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.states$ = this.vaccineNotifierDashboardService.loadStates();
+    this.states$ = this.vaccineNotifierDashboardService.loadStates().pipe( shareReplay( 1 ) );
     this.vaccineNotifierFormGroup = new FormGroup( {
       state : new FormControl( undefined, Validators.required ),
       districts : new FormControl( [], Validators.required ),
