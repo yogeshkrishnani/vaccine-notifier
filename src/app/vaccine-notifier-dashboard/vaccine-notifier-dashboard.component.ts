@@ -38,14 +38,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
 
   public displayedColumns: string[] = [ 'vaccine', 'date', 'pinCode', 'availableCapacity', 'ageGroup', 'name', 'address' ];
 
-  public pollingIntervals = [
-    { value : 20, label : '20sec' },
-    { value : 30, label : '30sec' },
-    { value : 45, label : '45sec' },
-    { value : 90, label : '90sec' },
-    { value : 120, label : '120sec' },
-    { value : 180, label : '180sec' },
-  ];
+  public readonly vaccineTypes = [ 'Covishield', 'Covaxin' ];
 
   private selectedTab: SearchByTab = SearchByTab.District;
 
@@ -71,6 +64,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
       ageGroup45Plus : new FormControl( false, Validators.required ),
       makeSound : new FormControl( true, Validators.required ),
       pinCode : new FormControl(),
+      preferredVaccineTypes : new FormControl( this.vaccineTypes, Validators.required ),
     } );
     this.vaccineNotifierFormGroup.get( 'state' ).valueChanges.pipe(
       filter( ( stateId: number ) => !!stateId ),
@@ -145,32 +139,37 @@ export class VaccineNotifierDashboardComponent implements OnInit {
     const makeSound = this.vaccineNotifierFormGroup.get( 'makeSound' ).value;
     const ageGroup18Plus = this.vaccineNotifierFormGroup.get( 'ageGroup18Plus' ).value;
     const ageGroup45Plus = this.vaccineNotifierFormGroup.get( 'ageGroup45Plus' ).value;
+    const preferredVaccineTypes: string[] = this.vaccineNotifierFormGroup.get( 'preferredVaccineTypes' ).value;
     centers?.forEach( center => {
       center.sessions?.forEach( session => {
+        session.available_capacity = Math.round( session.available_capacity );
+        if ( session.available_capacity === 0 ) {
+          return;
+        }
         if ( !ageGroup18Plus && session.min_age_limit === 18 ) {
           return;
         }
         if ( !ageGroup45Plus && session.min_age_limit >= 45 ) {
           return;
         }
-        session.available_capacity = Math.round( session.available_capacity );
-        if ( session.available_capacity > 0 ) {
-          console.log(
-            'vaccine: ' + session.vaccine,
-            '| min_age_limit: ' + session.min_age_limit,
-            '| date: ' + session.date,
-            '| pincode: ' + center.pincode,
-            '| availableCapacity: ' + session.available_capacity,
-            center,
-            new Date(),
-          );
-          availableCenters.push( { center, session } );
-          if ( makeSound ) {
-            for ( let i = 0; i < 5; i++ ) {
-              setTimeout( () => {
-                this.beep();
-              }, i * 1000 );
-            }
+        if ( !preferredVaccineTypes.find( v => v.toLowerCase() === session.vaccine.toLowerCase() ) ) {
+          return;
+        }
+        console.log(
+          'vaccine: ' + session.vaccine,
+          '| min_age_limit: ' + session.min_age_limit,
+          '| date: ' + session.date,
+          '| pincode: ' + center.pincode,
+          '| availableCapacity: ' + session.available_capacity,
+          center,
+          new Date(),
+        );
+        availableCenters.push( { center, session } );
+        if ( makeSound ) {
+          for ( let i = 0; i < 5; i++ ) {
+            setTimeout( () => {
+              this.beep();
+            }, i * 1000 );
           }
         }
       } );

@@ -22,9 +22,30 @@
     padding: 1rem;
 
     .vaccineNotifierForm {
-      mat-form-field {
+      .full-width, .general-filters {
         display: flex;
         flex-direction: column;
+      }
+
+      .state-and-district-tab-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      /* Responsive layout - makes a one column layout instead of a two-column layout */
+      @media (max-width: 600px) {
+        .state-and-district-tab-content {
+          flex-direction: column;
+        }
+      }
+
+      mat-form-field {
+        flex: 49% 0 0;
+      }
+
+      .polling-interval-slider {
+        margin-left: 1rem;
       }
     }
 
@@ -45,13 +66,13 @@
       }
     }
 
-    .age-group-section {
+    .group-section {
       display: flex;
       align-content: center;
       align-items: center;
       height: 2rem;
 
-      .age-group {
+      .group-item {
         margin: 0 1rem 0 0;
       }
     }

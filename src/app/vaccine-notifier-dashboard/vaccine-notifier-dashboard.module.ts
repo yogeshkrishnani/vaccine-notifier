@@ -8,6 +8,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field/';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MAT_TABS_CONFIG, MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -29,6 +30,7 @@ import { VaccineNotifierDashboardComponent } from './vaccine-notifier-dashboard.
     MatInputModule,
     MatOptionModule,
     MatSelectModule,
+    MatSliderModule,
     MatTabsModule,
     MatTableModule,
     MatToolbarModule,

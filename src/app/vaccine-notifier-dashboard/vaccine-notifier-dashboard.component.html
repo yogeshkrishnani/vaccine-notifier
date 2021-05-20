@@ -19,64 +19,87 @@
   <form class="vaccineNotifierForm" [formGroup]="vaccineNotifierFormGroup">
 
     <mat-tab-group (selectedTabChange)="handleSearchByTabChange($event)">
-      <mat-tab>
-        <ng-template mat-tab-label>Search By District</ng-template>
-        <mat-form-field *ngIf="( states$ | async )" appearance="outline">
-          <mat-label>Select State</mat-label>
-          <mat-select formControlName="state">
-            <mat-option
-              *ngFor="let state of ( states$ | async )" [value]="state.state_id"
-            >{{state.state_name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-tab class="state-and-district-tab">
+        <div class="state-and-district-tab-content">
+          <ng-template mat-tab-label>Search By District</ng-template>
+          <mat-form-field *ngIf="( states$ | async )" appearance="outline">
+            <mat-label>Select State</mat-label>
+            <mat-select formControlName="state">
+              <mat-option
+                *ngFor="let state of ( states$ | async )" [value]="state.state_id"
+              >{{state.state_name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Select Districts</mat-label>
-          <mat-select formControlName="districts" multiple>
-            <mat-option
-              *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
-            >{{district.district_name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Select Districts</mat-label>
+            <mat-select formControlName="districts" multiple>
+              <mat-option
+                *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
+              >{{district.district_name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>Search By PIN</ng-template>
-        <mat-form-field appearance="outline">
+        <mat-form-field class="full-width" appearance="outline">
           <mat-label>Enter PIN</mat-label>
           <input matInput formControlName="pinCode" placeholder="Ex: 361152, 390051">
         </mat-form-field>
       </mat-tab>
     </mat-tab-group>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Polling Interval</mat-label>
-      <mat-select formControlName="pollingInterval">
-        <mat-option
-          *ngFor="let interval of pollingIntervals" [value]="interval.value"
-        >{{interval.label}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="general-filters">
 
-    <section class="age-group-section">
-      <mat-checkbox
-        class="age-group"
-        color="primary"
-        formControlName="ageGroup18Plus"
-      >
-        <mat-label>18+ Age Group</mat-label>
-      </mat-checkbox>
-      <mat-checkbox
-        class="age-group"
-        color="primary"
-        formControlName="ageGroup45Plus"
-      >
-        <mat-label>45+ Age Group</mat-label>
-      </mat-checkbox>
-    </section>
+      <mat-form-field appearance="outline">
+        <mat-label>Vaccine Type</mat-label>
+        <mat-select formControlName="preferredVaccineTypes" multiple>
+          <mat-option
+            *ngFor="let vaccineType of vaccineTypes"
+            [value]="vaccineType"
+          >
+            {{ vaccineType }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-checkbox color="primary" formControlName="makeSound">
-      <mat-label>Make Sound</mat-label>
-    </mat-checkbox>
+      <section class="group-section">
+        <mat-checkbox
+          class="group-item"
+          color="primary"
+          formControlName="ageGroup18Plus"
+        >
+          <mat-label>18+ Age Group</mat-label>
+        </mat-checkbox>
+        <mat-checkbox
+          class="group-item"
+          color="primary"
+          formControlName="ageGroup45Plus"
+        >
+          <mat-label>45+ Age Group</mat-label>
+        </mat-checkbox>
+      </section>
+
+      <mat-checkbox color="primary" formControlName="makeSound">
+        <mat-label>Make Sound</mat-label>
+      </mat-checkbox>
+
+      <section>
+        <mat-label>Polling Interval</mat-label>
+        <mat-slider
+          aria-label="seconds"
+          class="polling-interval-slider"
+          formControlName="pollingInterval"
+          max="200"
+          min="20"
+          step="10"
+          thumbLabel
+          tickInterval="10"
+        ></mat-slider>
+      </section>
+
+    </div>
 
   </form>
 

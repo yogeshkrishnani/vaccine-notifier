@@ -26,7 +26,7 @@
 
 <!-- Initialize Firebase Analytics -->
 <script>
-  if(firebase) {
+  if(typeof firebase !== 'undefined') {
     firebase.analytics();
     console.log( 'firebase analytics initialized' );
   }
