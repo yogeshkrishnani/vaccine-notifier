@@ -53,7 +53,7 @@
     <div class="general-filters">
 
       <mat-form-field appearance="outline">
-        <mat-label>Vaccine Type</mat-label>
+        <mat-label>Vaccine</mat-label>
         <mat-select formControlName="preferredVaccineTypes" multiple>
           <mat-option
             *ngFor="let vaccineType of vaccineTypes"
@@ -63,6 +63,21 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <section class="mBtm10">
+        <mat-button-toggle-group
+          formControlName="doseType"
+          name="fontStyle"
+          aria-label="Dose Type"
+        >
+          <mat-button-toggle [value]="DoseType.First">
+            <span>1<sup>st</sup> Dose</span>
+          </mat-button-toggle>
+          <mat-button-toggle [value]="DoseType.Second">
+            <span>2<sup>nd</sup> Dose</span>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </section>
 
       <section class="group-section">
         <mat-checkbox
@@ -86,7 +101,7 @@
       </mat-checkbox>
 
       <section>
-        <mat-label>Polling Interval</mat-label>
+        <mat-label>Polling Interval (In Seconds)</mat-label>
         <mat-slider
           aria-label="seconds"
           class="polling-interval-slider"

@@ -21,6 +21,11 @@ export interface District {
   readonly district_name: string;
 }
 
+export enum DoseType {
+  'First',
+  'Second',
+}
+
 @Component( {
   selector : 'app-vaccine-notifier-dashboard',
   templateUrl : './vaccine-notifier-dashboard.component.html',
@@ -39,6 +44,8 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   public displayedColumns: string[] = [ 'vaccine', 'date', 'pinCode', 'availableCapacity', 'ageGroup', 'name', 'address' ];
 
   public readonly vaccineTypes = [ 'Covishield', 'Covaxin' ];
+
+  public readonly DoseType = DoseType;
 
   private selectedTab: SearchByTab = SearchByTab.District;
 
@@ -62,6 +69,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
       pollingInterval : new FormControl( 20, Validators.required ),
       ageGroup18Plus : new FormControl( true, Validators.required ),
       ageGroup45Plus : new FormControl( false, Validators.required ),
+      doseType : new FormControl( DoseType.First, Validators.required ),
       makeSound : new FormControl( true, Validators.required ),
       pinCode : new FormControl(),
       preferredVaccineTypes : new FormControl( this.vaccineTypes, Validators.required ),
@@ -136,14 +144,17 @@ export class VaccineNotifierDashboardComponent implements OnInit {
   private handleResponse( res: any ): void {
     const availableCenters = [];
     const centers = res.centers;
+    const doseType: DoseType = this.vaccineNotifierFormGroup.get( 'doseType' ).value;
     const makeSound = this.vaccineNotifierFormGroup.get( 'makeSound' ).value;
     const ageGroup18Plus = this.vaccineNotifierFormGroup.get( 'ageGroup18Plus' ).value;
     const ageGroup45Plus = this.vaccineNotifierFormGroup.get( 'ageGroup45Plus' ).value;
     const preferredVaccineTypes: string[] = this.vaccineNotifierFormGroup.get( 'preferredVaccineTypes' ).value;
     centers?.forEach( center => {
       center.sessions?.forEach( session => {
-        session.available_capacity = Math.round( session.available_capacity );
-        if ( session.available_capacity === 0 ) {
+        const availableCapacity = Math.round(
+          doseType === DoseType.First ? session.available_capacity_dose1 : session.available_capacity_dose2
+        );
+        if ( availableCapacity === 0 ) {
           return;
         }
         if ( !ageGroup18Plus && session.min_age_limit === 18 ) {
@@ -160,7 +171,7 @@ export class VaccineNotifierDashboardComponent implements OnInit {
           '| min_age_limit: ' + session.min_age_limit,
           '| date: ' + session.date,
           '| pincode: ' + center.pincode,
-          '| availableCapacity: ' + session.available_capacity,
+          '| availableCapacity: ' + availableCapacity,
           center,
           new Date(),
         );
