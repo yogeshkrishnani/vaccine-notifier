@@ -82,4 +82,22 @@
     }
   }
 
+  .notes {
+    color: #7a7a7a;
+    font-size: 14px;
+    margin: 2rem 0 0;
+
+    .label {
+      padding-left: 0.2rem;
+    }
+
+    .notes-icon {
+      vertical-align: middle;
+    }
+
+    > ul {
+      padding: 0 0 0 1rem;
+    }
+  }
+
 }

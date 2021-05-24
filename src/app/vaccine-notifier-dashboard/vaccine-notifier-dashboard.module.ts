@@ -7,6 +7,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field/';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
@@ -29,6 +30,7 @@ import { VaccineNotifierDashboardComponent } from './vaccine-notifier-dashboard.
     MatButtonToggleModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatOptionModule,
     MatSelectModule,

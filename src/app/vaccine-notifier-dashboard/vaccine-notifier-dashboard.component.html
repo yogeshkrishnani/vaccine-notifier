@@ -140,7 +140,7 @@
   </button>
 
   <ng-container
-    *ngIf="( availableSlots$ | async )?.length > 0"
+    *ngIf="( availableSlots$ | async )?.length > 0; else notes"
   >
 
     <table mat-table [dataSource]="availableSlots$ | async" class="mat-elevation-z8">
@@ -185,6 +185,18 @@
     </table>
 
   </ng-container>
+
+  <ng-template #notes>
+    <div class="notes">
+      <mat-icon class="notes-icon">info</mat-icon>
+      <label class="label">Notes:</label>
+      <ul>
+        <li>The second dose of COVAXIN should be taken between 28 days to 42 days after the first dose.</li>
+        <li>The second dose of COVISHIELD should be taken between 84 days to 112 days after the first dose</li>
+        <li>The second dose of SPUTNIK V should be taken between 21 days to 90 days after the first dose</li>
+      </ul>
+    </div>
+  </ng-template>
 
 </div>
 
