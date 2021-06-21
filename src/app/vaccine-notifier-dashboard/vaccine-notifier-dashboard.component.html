@@ -5,11 +5,8 @@
   <marquee *ngIf="monitoringId">Vaccine Notifier Running</marquee>
 
   <a target="_blank" class="avatar-user avatar avatar-small" href="https://www.linkedin.com/in/yogeshkrishnani">
-    <img
-      title="Yogesh Krishnani"
-      src="https://avatars.githubusercontent.com/u/17405938" alt="@yogeshkrishnani" size="40" height="40"
-      width="40"
-    >
+    <img title="Yogesh Krishnani" src="https://avatars.githubusercontent.com/u/17405938" alt="@yogeshkrishnani"
+      size="40" height="40" width="40">
   </a>
 
 </mat-toolbar>
@@ -25,18 +22,16 @@
           <mat-form-field *ngIf="( states$ | async )" appearance="outline">
             <mat-label>Select State</mat-label>
             <mat-select formControlName="state">
-              <mat-option
-                *ngFor="let state of ( states$ | async )" [value]="state.state_id"
-              >{{state.state_name}}</mat-option>
+              <mat-option *ngFor="let state of ( states$ | async )" [value]="state.state_id">{{state.state_name}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Select Districts</mat-label>
             <mat-select formControlName="districts" multiple>
-              <mat-option
-                *ngFor="let district of ( districts$ | async )" [value]="district.district_id"
-              >{{district.district_name}}</mat-option>
+              <mat-option *ngFor="let district of ( districts$ | async )" [value]="district.district_id">
+                {{district.district_name}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -55,21 +50,14 @@
       <mat-form-field appearance="outline">
         <mat-label>Vaccine</mat-label>
         <mat-select formControlName="preferredVaccineTypes" multiple>
-          <mat-option
-            *ngFor="let vaccineType of vaccineTypes"
-            [value]="vaccineType"
-          >
+          <mat-option *ngFor="let vaccineType of vaccineTypes" [value]="vaccineType">
             {{ vaccineType }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <section class="mBtm10">
-        <mat-button-toggle-group
-          formControlName="doseType"
-          name="fontStyle"
-          aria-label="Dose Type"
-        >
+        <mat-button-toggle-group formControlName="doseType" name="fontStyle" aria-label="Dose Type">
           <mat-button-toggle [value]="DoseType.First">
             <span>1<sup>st</sup> Dose</span>
           </mat-button-toggle>
@@ -80,68 +68,44 @@
       </section>
 
       <section class="group-section">
-        <mat-checkbox
-          class="group-item"
-          color="primary"
-          formControlName="ageGroup18Plus"
-        >
+        <mat-checkbox class="group-item" color="primary" formControlName="ageGroup18Plus">
           <mat-label>18+ Age Group</mat-label>
         </mat-checkbox>
-        <mat-checkbox
-          class="group-item"
-          color="primary"
-          formControlName="ageGroup45Plus"
-        >
+        <mat-checkbox class="group-item" color="primary" formControlName="ageGroup45Plus">
           <mat-label>45+ Age Group</mat-label>
         </mat-checkbox>
       </section>
 
-      <mat-checkbox color="primary" formControlName="makeSound">
-        <mat-label>Make Sound</mat-label>
-      </mat-checkbox>
+      <section class="group-section">
+        <mat-checkbox class="group-item" color="primary" formControlName="makeSound">
+          <mat-label>Make Sound</mat-label>
+        </mat-checkbox>
+
+        <mat-checkbox class="group-item" color="primary" formControlName="includePaid">
+          <mat-label>Include Paid</mat-label>
+        </mat-checkbox>
+      </section>
 
       <section>
         <mat-label>Polling Interval (In Seconds)</mat-label>
-        <mat-slider
-          aria-label="seconds"
-          class="polling-interval-slider"
-          formControlName="pollingInterval"
-          max="200"
-          min="20"
-          step="10"
-          thumbLabel
-          tickInterval="10"
-        ></mat-slider>
+        <mat-slider aria-label="seconds" class="polling-interval-slider" formControlName="pollingInterval" max="200"
+          min="20" step="10" thumbLabel tickInterval="10"></mat-slider>
       </section>
 
     </div>
 
   </form>
 
-  <button
-    *ngIf="!monitoringId"
-    (click)="startMonitoring()"
-    [disabled]="!vaccineNotifierFormGroup.valid"
-    color="primary"
-    mat-flat-button
-    type="button"
-  >
+  <button *ngIf="!monitoringId" (click)="startMonitoring()" [disabled]="!vaccineNotifierFormGroup.valid" color="primary"
+    mat-flat-button type="button">
     Start Monitoring
   </button>
 
-  <button
-    (click)="stopMonitoring()"
-    *ngIf="monitoringId"
-    color="warn"
-    mat-flat-button
-    type="button"
-  >
+  <button (click)="stopMonitoring()" *ngIf="monitoringId" color="warn" mat-flat-button type="button">
     Stop Monitoring
   </button>
 
-  <ng-container
-    *ngIf="( availableSlots$ | async )?.length > 0; else notes"
-  >
+  <ng-container *ngIf="( availableSlots$ | async )?.length > 0; else notes">
 
     <table mat-table [dataSource]="availableSlots$ | async" class="mat-elevation-z8">
 
@@ -199,5 +163,3 @@
   </ng-template>
 
 </div>
-
-
